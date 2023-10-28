@@ -22,15 +22,22 @@ MongoClient.connect(url).then(data=>{
     // })
 
 
-    // const bk1 = {name:"Java",price:1500,qty:1}
+    // const bk1 = {Name:"SQL",price:1500,qty:1}
     // const bk2 = {name:"C",price:5,qty:5};
     // db.collection("book").insertMany([bk1,bk2]).then(data=>{
     //     console.log(data);
     // })
 
-    db.collection("book").find().toArray().then(data=>{
-        console.log(data);
-    })
+    // db.collection("book").find().toArray().then(data=>{
+    //     console.log(data);
+    // })
+
+
+    // db.collection("book").findOne({Name:"SQL"}).then(data=>{
+    //     console.log(data);
+    // }).catch(err=>{
+    //     console.log(err);
+    // })
 
 
 
