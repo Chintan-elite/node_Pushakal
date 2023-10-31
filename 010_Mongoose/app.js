@@ -66,12 +66,39 @@ const viewProduct = async()=>{
         //const data = await Product.find({price:{$lt:500}})
 
 
-        console.log(data);
+        //console.log(data);
 
 }
 
 
+const updateProduct = async ()=>{
+
+    // Product.updateOne({pname:"Fan"},{$set:{price:500}}).then(data=>{
+    //     console.log(data);
+    // }).catch(err=>{
+    //     console.log(err);
+    // })
+
+   const dt = await Product.findByIdAndUpdate("653cdd9947d31f6320f284d0",{price:700})
+    console.log(dt);
+}
+
+
+
+const deleteProduct =async ()=>{
+
+    try {
+       // const data = await Product.deleteOne({pname:"Fan"})
+       const data = await Product.findByIdAndDelete('653cdeecdb7ef018694ee76f');
+        console.log(data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 //addProduct();
 //addManyProduct()
-viewProduct()
+//viewProduct()
+//updateProduct()
+deleteProduct()
