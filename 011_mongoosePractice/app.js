@@ -15,7 +15,6 @@ const Product = require("./products")
 const addCatergory = async ()=>{
     try {
         
-
         const c1 =new Category({catname : "Electric"})
         const c2 = new Category({catname:"Clothes"})
         const c3 =new Category( {catname:"Sports"})
