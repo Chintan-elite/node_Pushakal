@@ -1,8 +1,8 @@
 {
-  "name": "013_restapi",
+  "name": "basic",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "hashing.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,8 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "express": "^4.18.2",
-    "mongoose": "^8.0.0"
+    "bcryptjs": "^2.4.3"
   }
 }
