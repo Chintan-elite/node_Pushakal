@@ -1,9 +1,9 @@
 
 const router = require("express").Router()
 const Category = require("../model/categories")
+const auth = require("../middleware/auth")
 
-
-router.get("/",async(req,resp)=>{
+router.get("/",auth,async(req,resp)=>{
     
     try {
         const data = await Category.find();
@@ -15,7 +15,7 @@ router.get("/",async(req,resp)=>{
 
 })
 
-router.post("/",async(req,resp)=>{
+router.post("/",auth,async(req,resp)=>{
     try {
         
         const cat = new Category(req.body)
