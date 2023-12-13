@@ -30,8 +30,8 @@
                                 <td>{{this.username}}</td>
                                 <td>{{this.email}}</td>
                                 <td><img src="profile/{{this.img}}" alt="" height="50px" width="50px"></td>   
-                                <td><a href="" class="btn btn-danger">Delete</a></td>
-                                  <td><a href="" class="btn btn-primary">Edit</a></td>
+                                <td><a href="delete?did={{this._id}}" class="btn btn-danger">Delete</a></td>
+                                <td><a href="edit?eid={{this._id}}" class="btn btn-primary">Edit</a></td>
                             </tr>
                         {{/each}}
 

@@ -7,7 +7,9 @@ const hbs = require("hbs")
 const path = require("path")
 const mongoose = require("mongoose")
 const bodyParser = require("body-parser")
+const cookieParser = require("cookie-parser")
 app.use(bodyParser())
+app.use(cookieParser())
 mongoose.connect(DBURL).then(data=>{
     console.log("DB Connected");
 })

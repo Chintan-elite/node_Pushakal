@@ -2,6 +2,8 @@ const router = require("express").Router()
 const multer = require("multer")
 const User = require("../model/users")
 const bcrypt = require("bcryptjs")
+const fs = require("fs")
+const auth = require("../middleware/auth")
 var storage = multer.diskStorage({ 
     destination: function (req, file, cb) { 
   
@@ -27,7 +29,7 @@ router.get("/reg",(req,resp)=>{
     resp.render("registration")
 })
 
-router.get("/home",async(req,resp)=>{
+router.get("/home",auth,async(req,resp)=>{
 
     try {
         
@@ -58,6 +60,8 @@ router.post("/userlogin",async(req,resp)=>{
         var isValid =   await bcrypt.compare(req.body.password,user.password)
         if(isValid)
         {
+            const token = await user.generateToken()
+            resp.cookie("jwt",token)
             resp.redirect("home")
         }
         else
@@ -67,6 +71,43 @@ router.post("/userlogin",async(req,resp)=>{
 
     } catch (error) {
         resp.render("login",{"err":"Invalid credentials"})
+    }
+})
+
+
+router.get("/delete",async(req,resp)=>{
+    try {
+        const did = req.query.did;
+
+        const data = await User.findByIdAndDelete(did);
+        
+        fs.unlinkSync("./public/profile/"+data.img);
+        resp.redirect("home")
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.get("/edit",async(req,resp)=>{
+    try {
+        const eid = req.query.eid;
+        const data = await User.findById(eid);
+        resp.render("update",{udata:data})
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.post("/updateuser",upload,async(req,resp)=>{
+    try {
+        
+        const id = req.body.id;
+        const data = await User.findByIdAndUpdate(id,{username:req.body.username,email:req.body.email,img:req.file.filename});
+        fs.unlinkSync("./public/profile/"+data.img);
+        resp.redirect("home")
+
+    } catch (error) {
+        console.log(error);
     }
 })
 
