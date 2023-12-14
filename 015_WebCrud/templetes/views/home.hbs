@@ -13,16 +13,20 @@
 <body>
 
         <div class="container">
+          
             <div class="row">
                 <div class="col-md-6 m-auto">
                     <h1 align="center">User Details</h1>
-
+                    <span></span>
+                    <br>
                     <table class="table">
                         <tr>
                             <th>Username</th>
                             <th>Email</th>
                             <th>Profile</th>
-                            <th colspan="2">Action</th>
+                            <th>Action</th>
+                            <th><a href="logout" class="btn btn-success">Logout</a>
+                            <a href="logoutall" class="btn btn-success">Logoutall</a></th>
                         </tr>
 
                         {{#each userdata}}

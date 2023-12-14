@@ -4,6 +4,7 @@ const User = require("../model/users")
 const bcrypt = require("bcryptjs")
 const fs = require("fs")
 const auth = require("../middleware/auth")
+const { log } = require("console")
 var storage = multer.diskStorage({ 
     destination: function (req, file, cb) { 
   
@@ -57,6 +58,12 @@ router.post("/userlogin",async(req,resp)=>{
         
         const user = await User.findOne({email:req.body.email})
 
+        if(user.Tokens.length>=1)
+        {
+            resp.render("login",{"err":"Max userlimit reachec!!!"})
+            return;
+        }
+
         var isValid =   await bcrypt.compare(req.body.password,user.password)
         if(isValid)
         {
@@ -105,6 +112,48 @@ router.post("/updateuser",upload,async(req,resp)=>{
         const data = await User.findByIdAndUpdate(id,{username:req.body.username,email:req.body.email,img:req.file.filename});
         fs.unlinkSync("./public/profile/"+data.img);
         resp.redirect("home")
+
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.get("/logout",auth,async(req,resp)=>{
+
+    var user = req.user;
+    var token = req.token
+
+    try {
+        
+        user.Tokens =  user.Tokens.filter(ele=>{
+           
+            return ele.token != token
+        })
+
+       
+
+        await user.save();
+        resp.clearCookie("jwt");
+        resp.render("login")
+
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.get("/logoutall",auth,async(req,resp)=>{
+
+    var user = req.user;
+    var token = req.token
+
+    try {
+        
+       user.Tokens = [];
+       
+
+        await user.save();
+        resp.clearCookie("jwt");
+        resp.render("login")
 
     } catch (error) {
         console.log(error);
