@@ -141,5 +141,86 @@ router.get("/addtocart",auth,async(req,resp)=>{
         
     }
 })
+const Razorpay = require('razorpay');
+
+router.get("/payment",(req,resp)=>{
+
+    const amt = Number(req.query.amt)
+    
+    var instance = new Razorpay({ key_id: 'rzp_test_5IpPavBJK9DDzS', key_secret: '2zzNHHi2Af9iHWp6nah9QbPD' })
+
+    var options = {
+      amount: amt*100,  // amount in the smallest currency unit
+      currency: "INR",
+      receipt: "order_rcptid_11"
+    };
+    instance.orders.create(options, function(err, order) {
+      resp.send(order)
+    });
+
+})
+
+const Order = require("../model/order")
+var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'chintan.tops@gmail.com',
+    pass: 'gwxi mmoo mkqg zabq'
+  }
+});
+
+
+router.get("/order",auth,async(req,resp)=>{
+    try {
+        const pid = req.query.pid
+        const user = req.user
+
+        const allCartProd = await Cart.find({uid:user._id})
+        var products = [];
+        var str = "";
+        for(var i=0;i<allCartProd.length;i++)
+        {
+            const pdata = await Product.findById(allCartProd[i].pid)
+           
+            products[i] = {
+                pname : pdata.name,
+                price : pdata.price,
+                qty : allCartProd[i].qty
+                
+            }
+            str = str+"<tr><td>"+pdata.name+"</td><td>"+pdata.price+"</td><td>"+allCartProd[i].qty+"</td></tr>"
+        }
+
+       const order = new Order({uid:user._id,pid:pid,product:products})
+       const o =  await order.save();
+       
+       var mailOptions = {
+        from: 'chintan.tops@gmail.com',
+        to: user.email,
+        subject: 'Order Conformation',
+        html: "<h1>Your Order</h1><table border='1'><tr><th>ProductName</th><th>Product Price</th><th>Qty</th></tr>"+str+"</table>"
+      };
+    
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+
+
+      await Cart.deleteMany({uid:user._id});
+
+
+       resp.send("order confirm")
+
+    } catch (error) {
+        
+    }
+
+})
 
 module.exports = router

@@ -233,9 +233,9 @@
                         <h5>Cart Total</h5>
                         <ul>
                             <li>Subtotal <span>{{alltotal}}</span></li>
-                            <li>Total <span>{{alltotal}}</span></li>
+                            <li>Total <span id="amt">{{alltotal}}</span></li>
                         </ul>
-                        <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
+                        <button id="checkout" class="primary-btn">PROCEED TO CHECKOUT</button>
                     </div>
                 </div>
             </div>
@@ -321,7 +321,62 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
 
+document.getElementById('checkout').onclick = function(e){
+  
+    var amt = document.getElementById("amt").textContent
+    e.preventDefault();
+   alert(amt)
+    fetch("/payment?amt="+amt).then(data=>{
+        return data.json()
+    }).then(result=>{
+
+        var options = {
+    "key": "rzp_test_5IpPavBJK9DDzS", // Enter the Key ID generated from the Dashboard
+    "amount": "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Tops technologies",
+    "description": "Test Transaction",
+    "image": "https://topsint.com/topserp/images/logo-tops.png",
+    "order_id": result.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        var pid = response.razorpay_payment_id;
+        $.get("order",{pid},function(rt){
+            alert(rt)
+            location.reload()
+        })
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+});
+
+rzp1.open();
+    })
+   
+   
+}
+</script>
 </body>
 
 </html>
