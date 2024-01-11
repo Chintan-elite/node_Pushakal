@@ -21,6 +21,26 @@
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+
+
+    <script>
+
+        function deleteproduct(cartid)
+        {
+               $.get("deletefromcart",{cartid},function(rt){
+                location.reload();
+               })
+        }
+
+        function changeqty(cartid,qty)
+        {
+            $.get("changeqty",{cartid,qty},function(rt){
+              
+                location.reload();
+            })
+        }
+
+    </script>
 </head>
 
 <body>
@@ -191,16 +211,18 @@
                                     </td>
                                     <td class="shoping__cart__quantity">
                                         <div class="quantity">
-                                            <div class="pro-qty">
-                                                <input type="text" value="{{this.qty}}">
-                                            </div>
+                                            <button onclick="changeqty('{{this._id}}',-1)">-</button>
+                                          
+                                                <input type="text" value="{{this.qty}}" style="width: 50px;" readonly>
+                                           
+                                            <button onclick="changeqty('{{this._id}}',1)">+</button>
                                         </div>
                                     </td>
                                     <td class="shoping__cart__total">
                                         ${{this.total}}
                                     </td>
                                     <td class="shoping__cart__item__close">
-                                        <span class="icon_close"></span>
+                                        <button class="icon_close" onclick="deleteproduct('{{this._id}}')"></button>
                                     </td>
                                 </tr>
                                 {{/each}}

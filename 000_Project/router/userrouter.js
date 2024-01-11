@@ -108,6 +108,7 @@ router.get("/shoping-cart",auth,async(req,resp)=>{
                 var ptotal = pdata.price * cartdata[i].qty;
                 alltotal += ptotal
                 allcdata[i] = {
+                    _id : cartdata[i]._id,
                     pid : pdata._id,
                     pname : pdata.name,
                     price : pdata.price,
@@ -133,10 +134,27 @@ router.get("/addtocart",auth,async(req,resp)=>{
     const pid = req.query.pid;
     var qty = 1;
     try {
+
+        const allcart = await Cart.find({uid:uid})
+
+        const found = allcart.find(ele=>{
+            return ele.pid==pid
+        })
+
+        if(found)
+        {
+           // resp.send("product alredy exist in cart")
+           cqty = found.qty+1;
+         
+           const dt = await Cart.findByIdAndUpdate(found._id,{qty:cqty})
+           resp.send("Prodcut added into cart successfully !!!");
+        }
+        else
+        {
         const cart = new Cart({uid : uid,pid:pid,qty:qty})
         const dt = await cart.save();
         resp.send("Prodcut added into cart successfully !!!");
-       
+        }
     } catch (error) {
         
     }
@@ -221,6 +239,43 @@ router.get("/order",auth,async(req,resp)=>{
         
     }
 
+})
+
+
+router.get("/deletefromcart",auth,async(req,resp)=>{
+    try {
+        const id = req.query.cartid
+        await Cart.findByIdAndDelete(id);
+        resp.send("product deleted")
+    } catch (error) {
+        
+    }
+})
+
+router.get("/changeqty",async(req,resp)=>{
+    try {
+        const cartid  =req.query.cartid
+        const qty = req.query.qty
+
+        const cartdata = await Cart.findById(cartid)
+
+       
+
+        const newqty = Number(cartdata.qty)+Number(qty);
+
+        if(newqty==0)
+        {
+            return;
+        }
+
+        await Cart.findByIdAndUpdate(cartid,{qty:newqty});
+
+        resp.send("qty updated")
+
+
+    } catch (error) {
+        
+    }
 })
 
 module.exports = router
